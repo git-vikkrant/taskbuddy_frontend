@@ -13,7 +13,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await API.post("/auth/login", { email, password });
-      login(res.data.token); // store token in context
+      login(res.data.token, res.data.name || "User"); // Fallback to "User" if name is missing
       navigate("/dashboard");
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
@@ -22,7 +22,7 @@ export default function Login() {
 
   return (
     <div className="container">
-      <h2>Login</h2>
+      <h2>Login to Task Buddy</h2>
       <form onSubmit={handleLogin}>
         <input
           type="email"
@@ -40,7 +40,7 @@ export default function Login() {
         />
         <button type="submit">Login</button>
       </form>
-      <p>
+      <p className="bottomText">
         Don't have an account? <Link to="/signup">Signup</Link>
       </p>
     </div>

@@ -4,6 +4,9 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [userName, setUserName] = useState(
+    localStorage.getItem("userName") || null
+  );
 
   useEffect(() => {
     if (token) {
@@ -11,18 +14,27 @@ export function AuthProvider({ children }) {
     } else {
       localStorage.removeItem("token");
     }
-  }, [token]);
+    if (userName) {
+      localStorage.setItem("userName", userName);
+    } else {
+      localStorage.removeItem("userName");
+    }
+  }, [token, userName]);
 
-  const login = (newToken) => {
+  const login = (newToken, name) => {
     setToken(newToken);
+    setUserName(name);
   };
 
   const logout = () => {
     setToken(null);
+    setUserName(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, login, logout, isLoggedIn: !!token }}>
+    <AuthContext.Provider
+      value={{ token, userName, login, logout, isLoggedIn: !!token }}
+    >
       {children}
     </AuthContext.Provider>
   );

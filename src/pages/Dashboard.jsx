@@ -1,37 +1,40 @@
-import { useEffect, useState } from "react";
-import API from "../services/api";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import API from "../services/api";
 import TaskForm from "../components/TaskForm";
 import TaskList from "../components/TaskList";
-import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  const [tasks, setTasks] = useState([]);
-  const { logout } = useAuth();
+  const { userName, logout } = useAuth();
   const navigate = useNavigate();
+  const [tasks, setTasks] = useState([]);
 
   const fetchTasks = async () => {
     try {
       const res = await API.get("/tasks");
       setTasks(res.data);
     } catch (err) {
-      console.error(err);
+      alert("Failed to fetch tasks");
     }
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
   };
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     <div className="container">
-      <h2>Dashboard</h2>
-      <button onClick={handleLogout}>Logout</button>
+      <h2>Task Buddy</h2>
+      <div className="welcome-message">Welcome, {userName || "User"}!</div>
+      <button onClick={handleLogout} className="logoutBtn">
+        Logout
+      </button>
       <TaskForm onTaskAdded={fetchTasks} />
       <TaskList tasks={tasks} onTasksUpdated={fetchTasks} />
     </div>
